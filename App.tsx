@@ -21,16 +21,7 @@ const App: React.FC = () => {
   const [voiceGender, setVoiceGender] = useState<VoiceGender>('female');
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const {
-    speak,
-    cancelSpeech,
-    isSpeaking,
-    startListening,
-    stopListening,
-    isListening,
-    transcript,
-    speechRecognitionSupported,
-  } = useSpeech();
+  const { speak, cancelSpeech, isSpeaking, startListening, stopListening, isListening, transcript, speechRecognitionSupported } = useSpeech();
 
   const handleTurnComplete = useCallback((userText: string, botText: string) => {
     if (userText) setMessages(prev => [...prev, { role: 'user', content: userText, id: Date.now() }]);
@@ -49,19 +40,27 @@ const App: React.FC = () => {
     gender: voiceGender
   });
 
+  // --- Load initial message ---
   useEffect(() => {
-    const initialMessage: Message = { role: 'bot', content: "Namaste! My name is Khwopa AI created by Swornim. Any help needed?", id: Date.now() };
+    const initialMessage: Message = {
+      role: 'bot',
+      content: "Namaste! My name is Khwopa AI, created by Swornim. Any help needed?",
+      id: Date.now()
+    };
     try {
       const stored = localStorage.getItem('roast-chat-history');
       if (stored) {
         const parsed = JSON.parse(stored);
         setMessages(Array.isArray(parsed) && parsed.length > 0 ? parsed : [initialMessage]);
-      } else setMessages([initialMessage]);
+      } else {
+        setMessages([initialMessage]);
+      }
     } catch {
       setMessages([initialMessage]);
     }
   }, []);
 
+  // --- Save chat to localStorage ---
   useEffect(() => {
     if (messages.length > 0) localStorage.setItem('roast-chat-history', JSON.stringify(messages));
   }, [messages]);
@@ -70,6 +69,7 @@ const App: React.FC = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
 
+  // --- Send message handler ---
   const handleSendMessage = useCallback(async (text: string) => {
     if (!text.trim() || isLoading) return;
     cancelSpeech();
@@ -130,7 +130,14 @@ const App: React.FC = () => {
 
       {/* Chat messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-6">
-        {messages.map(msg => <ChatMessage key={msg.id} message={msg} isSpeaking={isSpeaking} onToggleSpeech={() => isSpeaking ? cancelSpeech() : speak(msg.content, voiceGender)} />)}
+        {messages.map(msg => (
+          <ChatMessage
+            key={msg.id}
+            message={msg}
+            isSpeaking={isSpeaking}
+            onToggleSpeech={() => isSpeaking ? cancelSpeech() : speak(msg.content, voiceGender)}
+          />
+        ))}
         {isLoading && (
           <div className="flex justify-start items-center space-x-3 animate-fade-in-up">
             <KhwopaAILogo className="w-8 h-8 flex-shrink-0" />
@@ -144,7 +151,16 @@ const App: React.FC = () => {
 
       {/* Chat input */}
       <div className="p-4 bg-black/30 backdrop-blur-sm">
-        <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} isListening={isListening} startListening={startListening} stopListening={stopListening} transcript={transcript} speechRecognitionSupported={speechRecognitionSupported} isLiveMode={isSessionActive} />
+        <ChatInput
+          onSendMessage={handleSendMessage}
+          isLoading={isLoading}
+          isListening={isListening}
+          startListening={startListening}
+          stopListening={stopListening}
+          transcript={transcript}
+          speechRecognitionSupported={speechRecognitionSupported}
+          isLiveMode={isSessionActive}
+        />
       </div>
 
       {/* API Key Modal */}
