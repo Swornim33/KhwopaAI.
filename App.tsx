@@ -50,7 +50,7 @@ const App: React.FC = () => {
   });
 
   useEffect(() => {
-    const initialMessage: Message = { role: 'bot', content: "Namaste! My name is Khwopa AI. Any help needed?", id: Date.now() };
+    const initialMessage: Message = { role: 'bot', content: "Namaste! My name is Khwopa AI created by Swornim. Any help needed?", id: Date.now() };
     try {
       const stored = localStorage.getItem('roast-chat-history');
       if (stored) {
