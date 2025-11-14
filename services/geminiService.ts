@@ -1,10 +1,12 @@
+// src/services/geminiService.ts
 import { GoogleGenAI, Chat } from "@google/genai";
 import type { Content } from "@google/genai";
 
-const API_KEY = process.env.API_KEY;
+// ✅ Use Vite env variable
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 if (!API_KEY) {
-  throw new Error("API_KEY environment variable is not set");
+  throw new Error("VITE_GEMINI_API_KEY environment variable is not set");
 }
 
 const ai = new GoogleGenAI({ apiKey: API_KEY });
@@ -32,7 +34,6 @@ export const sendMessageToGemini = async (
     return result.text;
   } catch (error) {
     console.error("Error communicating with Gemini API:", error);
-    // Fallback response in case of API error
     return "I'd roast you, but my circuits are fried. You're safe... for now. 😵‍💫";
   }
 };
