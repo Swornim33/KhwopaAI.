@@ -1,0 +1,7 @@
+{
+  "name": "Khwopa AI",
+  "description": "A web-based AI Roast Chatbot that responds to user messages with funny, sarcastic, or teasing “roasts” and converts its responses into audio.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
